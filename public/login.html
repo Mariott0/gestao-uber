@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f5f5">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101010">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Gestão Uber">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/login.js"></script>
+  <title>Entrar · Gestão Uber</title>
+</head>
+<body>
+  <header><div class="bar">
+    <div class="brand"><span aria-hidden="true">↗</span> Gestão Uber</div>
+  </div></header>
+  <main class="login-main">
+    <section class="card login-card" aria-labelledby="login-titulo">
+      <h1 id="login-titulo">Entrar</h1>
+      <form id="login-form" method="post" action="/api/login">
+        <div class="fields">
+          <label class="wide">Usuário<input name="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" enterkeyhint="next" required></label>
+          <label class="wide">Senha<input name="senha" type="password" autocomplete="current-password" enterkeyhint="go" required></label>
+        </div>
+        <p id="login-erro" class="erro" role="alert" hidden></p>
+        <button class="primary submit" type="submit" disabled>Entrar</button>
+      </form>
+      <noscript><p class="erro">Ative o JavaScript para entrar.</p></noscript>
+    </section>
+  </main>
+</body>
+</html>

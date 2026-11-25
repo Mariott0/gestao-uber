@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f5f5">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101010">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Gestão Uber">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+  <title>Gestão Uber</title>
+</head>
+<body>
+  <header><div class="bar">
+    <a class="brand" href="/"><span aria-hidden="true">↗</span> Gestão Uber</a>
+    <div class="bar-actions">
+      <button id="abrir-config" class="secondary" disabled>Configurações</button>
+      <button id="sair" class="secondary" type="button">Sair</button>
+    </div>
+  </div></header>
+  <main>
+    <div class="page-title"><h1>Painel</h1><button id="registrar" class="primary" disabled>＋ Registrar dia</button></div>
+    <p id="status" role="status">Carregando painel…</p>
+    <div id="painel" hidden>
+      <section class="hero" aria-label="Totais de todos os lançamentos">
+        <div><span>Líquido estimado acumulado</span><strong id="liquido"></strong></div>
+        <div class="hero-side"><span>Faturamento acumulado</span><strong id="faturamento"></strong></div>
+      </section>
+      <div class="cards">
+        <section class="card fuel" aria-labelledby="abastecimentos-titulo">
+          <h2 id="abastecimentos-titulo">Abastecimentos</h2>
+          <p class="muted">Total pago</p>
+          <strong id="total-abastecido"></strong>
+          <div class="card-actions"><button id="registrar-abastecimento" class="secondary">Registrar abastecimento</button></div>
+        </section>
+        <section class="card">
+          <h2>Passe</h2>
+          <p class="muted">R$ 171,00 a cada R$ 610,00 de faturamento</p>
+          <div class="meter-label"><strong id="progresso"></strong><span>de R$ 610,00</span></div>
+          <progress id="barra" max="61000" value="0" aria-label="Progresso até a próxima faixa do passe"></progress>
+          <p id="faixas" class="muted"></p>
+          <div class="card-actions"><button id="anotar" class="secondary">Anotar pagamento</button></div>
+        </section>
+        <section class="card goals">
+          <h2>Metas de líquido</h2>
+          <div id="metas"></div>
+        </section>
+      </div>
+      <section class="history">
+        <h2>Histórico</h2>
+        <div id="historico"></div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="dia-dialog" aria-labelledby="dia-titulo">
+    <form id="dia-form">
+      <div class="dialog-title"><h2 id="dia-titulo">Registrar dia</h2><button type="button" data-close class="close" aria-label="Fechar">×</button></div>
+      <div class="fields">
+        <label class="field-date">Data<input type="date" name="data" required></label>
+        <label>Faturamento Uber (R$)<input name="faturamento" inputmode="decimal" enterkeyhint="next" placeholder="0,00" required></label>
+        <label>Quilômetros rodados<input name="km" inputmode="decimal" enterkeyhint="next" placeholder="0,0" required></label>
+        <label>Gasolina (R$/L)<input name="preco" inputmode="decimal" enterkeyhint="next" required></label>
+        <label>Consumo médio<input name="consumo" inputmode="decimal" enterkeyhint="next" required></label>
+        <label>Unidade<select name="unidade"><option>km/L</option><option>L/km</option></select></label>
+        <label class="wide">Outras despesas (R$)<input name="despesas" inputmode="decimal" enterkeyhint="next" placeholder="Opcional"></label>
+        <label class="wide">Observações<textarea name="observacao" maxlength="1000" rows="2" placeholder="Opcional"></textarea></label>
+      </div>
+      <output id="estimativa" class="estimate"></output>
+      <p class="erro" role="alert" hidden></p>
+      <button class="primary submit">Salvar fechamento</button>
+    </form>
+  </dialog>
+  <dialog id="abastecimento-dialog" aria-labelledby="abastecimento-titulo">
+    <form id="abastecimento-form">
+      <div class="dialog-title"><h2 id="abastecimento-titulo">Registrar abastecimento</h2><button type="button" data-close class="close" aria-label="Fechar">×</button></div>
+      <div class="fields">
+        <label class="field-date">Data<input name="data" type="date" required></label>
+        <label>Valor pago (R$)<input name="valor" inputmode="decimal" enterkeyhint="next" placeholder="0,00" required></label>
+        <label class="wide">Litros<input name="litros" inputmode="decimal" enterkeyhint="done" placeholder="Opcional"></label>
+      </div>
+      <p class="erro" role="alert" hidden></p>
+      <button class="primary submit">Salvar abastecimento</button>
+    </form>
+  </dialog>
+  <dialog id="passe-dialog" aria-labelledby="passe-titulo">
+    <form id="passe-form">
+      <div class="dialog-title"><h2 id="passe-titulo">Pagamento do passe</h2><button type="button" data-close class="close" aria-label="Fechar">×</button></div>
+      <div class="fields">
+        <label class="field-date">Data<input name="data" type="date" required></label>
+        <label>Valor (R$)<input name="valor" inputmode="decimal" enterkeyhint="done" required></label>
+      </div>
+      <p class="erro" role="alert" hidden></p>
+      <button class="primary submit">Salvar pagamento</button>
+    </form>
+  </dialog>
+  <dialog id="config-dialog" aria-labelledby="config-titulo">
+    <form id="config-form">
+      <div class="dialog-title"><h2 id="config-titulo">Configurações</h2><button type="button" data-close class="close" aria-label="Fechar">×</button></div>
+      <div class="fields">
+        <label class="wide">Preço padrão da gasolina (R$/L)<input name="preco" inputmode="decimal" enterkeyhint="next" required></label>
+        <label>Meta semanal (R$)<input name="semanal" inputmode="decimal" enterkeyhint="next" required></label>
+        <label>Meta mensal (R$)<input name="mensal" inputmode="decimal" enterkeyhint="done" required></label>
+      </div>
+      <fieldset>
+        <legend>Dias planejados</legend>
+        <div class="week">
+          <label><input type="checkbox" name="dias" value="1">Seg</label>
+          <label><input type="checkbox" name="dias" value="2">Ter</label>
+          <label><input type="checkbox" name="dias" value="3">Qua</label>
+          <label><input type="checkbox" name="dias" value="4">Qui</label>
+          <label><input type="checkbox" name="dias" value="5">Sex</label>
+          <label><input type="checkbox" name="dias" value="6">Sáb</label>
+          <label><input type="checkbox" name="dias" value="0">Dom</label>
+        </div>
+      </fieldset>
+      <p class="erro" role="alert" hidden></p>
+      <button class="primary submit">Salvar configurações</button>
+    </form>
+  </dialog>
+</body>
+</html>
